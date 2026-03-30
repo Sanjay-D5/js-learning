@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navigation</title>
+    <style>
+        nav{
+            padding: 0.5rem 2rem;
+            background-color: antiquewhite;
+            border-radius: 5px;
+        }
+        .nav__links{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3rem;
+        }
+        .nav__links li{
+            list-style: none;
+        }
+        a{
+            text-decoration: none;
+            color: black;
+            font-size: 1.5rem;
+        }
+        .active {
+            color: #c45c2e;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <ul class="nav__links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <script>
+        const links = document.querySelectorAll('.nav__links a');
+        let activeLink;
+        
+        links.forEach(function(link){
+            link.addEventListener('click', (e) => {
+                highlight(e.currentTarget);
+            })
+        })
+
+        function highlight(link) {
+            if(activeLink){
+                activeLink.classList.remove('active');
+            }
+            activeLink = link;
+            activeLink.classList.add('active');
+
+        }
+        
+    </script>
+</body>
+</html>

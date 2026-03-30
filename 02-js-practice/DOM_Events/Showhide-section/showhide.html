@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review</title>
+    <style>
+        body{
+            font-family: 'DM Sans', sans-serif;  /* or any font you prefer */
+            text-align: center;
+            padding: 50px 1rem;
+        }   
+        .btn-toggle{
+            background-color: bisque;
+            color: black;
+            padding: 1rem 0.75rem;
+            border: 2px solid rgb(255, 165, 55);
+            font-size: 0.85rem;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .btn-toggle:hover {
+            background-color: rgb(241, 189, 125);
+        }
+        .comment {
+            font-size: 1rem;
+            margin: 2rem auto;
+            max-width: 480px;
+            border: 2px solid black;
+            padding: 2rem;
+            display: none;
+        }
+         .comment.show{
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <button class="btn-toggle" id="btn-toggle">Show comment</button>
+    <div class="comment" id="comment">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Excepturi, molestiae. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatem repellat at eaque esse ut, pariatur quasi possimus illum placeat soluta.</div>
+
+    <script>
+        const toggle = document.getElementById('btn-toggle');
+        const comment = document.getElementById('comment');
+
+        function commentfn() {
+            let isShow = comment.classList.toggle('show');
+            if(isShow) {
+                toggle.textContent = 'Hide comment';
+            } else {
+                toggle.textContent = 'Show comment';
+            } 
+        }
+
+        toggle.addEventListener('click', commentfn);
+    </script>
+</body>
+</html>

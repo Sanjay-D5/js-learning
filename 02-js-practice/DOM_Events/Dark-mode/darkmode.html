@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Darkmode</title>
+    <style>
+        :root{
+            --bg-color: rgb(219, 219, 196);
+            --txt-color: black;
+        }
+        .darkmode{
+            --bg-color: black;
+            --txt-color: wheat;
+        }
+        body{
+            background-color: rgb(30, 28, 28);
+        }
+        .detail{
+            padding: 2rem;
+            background-color: var(--bg-color);
+            width: 460px;
+            margin: 20% auto;
+            border-radius: 5px;
+        }
+        h1{
+            text-align: center;
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 2rem;
+        }
+        p{
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            letter-spacing: 0.02em;
+        }
+        button{
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            border-radius: 5px;
+            border: 2px solid rgb(130, 182, 0);
+            background-color: transparent;
+            color: var(--txt-color);
+        }
+        .btn-icon{
+            font-size: 15px;
+            width: 18px;
+            transition: transform 0.5s;
+        } 
+        .btn-title{
+            font-size: 0.9rem;
+        }
+        .darkmode{
+            background-color: var(--bg-color);
+            color: var(--txt-color);
+        }
+        div.darkmode .btn-icon{
+            transform: rotate(360deg);
+        }
+    </style>
+</head>
+<body>
+    <div class="detail">
+        <h1>Roman</h1>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eveniet, voluptates quidem? Saepe, fugiat? Officiis magnam, perferendis iusto aperiam delectus maxime iste porro. Beatae, possimus eligendi!</p>
+        <button class="btn" id="btn">
+            <span class="btn-icon" id="btn-icon">☾</span>
+            <span class="btn-title" id="btn-title">Dark mode</span>
+        </button>
+    </div>
+
+    <script>
+        let button = document.getElementById('btn');
+        let buttonIcon = document.getElementById('btn-icon');
+        let buttonTitle = document.getElementById('btn-title');
+        let detail = document.querySelector('.detail');
+
+        function togglefn() {
+            let isDark = detail.classList.toggle('darkmode');
+
+            if(isDark){
+                buttonIcon.textContent = '☀';
+                buttonTitle.textContent = 'Light mode'
+            } else {
+                buttonIcon.textContent = '☾';
+                buttonTitle.textContent = 'Dark mode'
+            }
+        }
+
+        button.addEventListener('click', togglefn)
+    </script>
+</body>
+</html>

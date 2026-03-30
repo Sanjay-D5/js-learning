@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Character Counter</title>
+    <style>
+        .over-limit{
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <label for="character">Your comments:</label>
+    <textarea id="character" rows="10" cols="50"></textarea>
+    <p><span class="char-count" id="char-count">0</span>/ 150</p>
+
+    <script>
+    let character = document.getElementById('character');
+    let count = document.getElementById('char-count');
+
+    character.addEventListener('input', function() {
+        const length = character.value.length;
+        count.textContent = length;
+        length > 150 ? count.classList.add('over-limit') : count.classList.remove('over-limit');
+        
+    });
+    </script>
+</body>
+</html>
