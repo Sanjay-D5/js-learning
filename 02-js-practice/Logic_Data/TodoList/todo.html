@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do list</title>
+    <style>
+        /* Base */
+        *, *::after, *::before{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body{
+            font-family: 'DM Sans', sans-serif;
+            padding: 3rem 1rem;
+            background: #f5f0e8;
+            color: #1a1814;
+        }
+
+        /* Container */
+        .container{
+            padding: 2rem;
+             border: 1px solid rgba(26,24,20,0.1);
+            background: #fffdf9;
+            border-radius: 8px;
+            margin: 0 auto;
+            max-width: 640px;
+        }
+        h1{
+            font-size: 1.6rem;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            color: #1a1814;
+            border-bottom: 1px solid rgba(26,24,20,0.1);
+        }
+
+        /* Input row */
+        .task{
+            display: flex;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+        }
+        .task input{
+            padding: 0.75rem 1rem ;
+            flex: 1; /* takes up all available space */
+            font-size: 1rem; 
+            font-family: 'DM Sans', sans-serif;
+            border: 1px solid rgba(26,24,20,0.2);
+            border-radius: 5px;
+            outline: none;
+            background: #faf7f2;
+            color: #1a1814;
+            transition: border 0.2s;
+        }
+        .task input:focus{
+            border-color: #c45c2e;
+        }
+        .task input::placeholder{
+            color: #a09888;
+        }
+        .addBtn{
+            padding: 0.75rem 1.25rem;
+            flex-shrink: 0; /* stays its natural size, never shrinks */
+            font-size: 0.95rem;
+            background-color: #c45c2e;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: opacity 0.2s;
+        }
+        .addBtn:hover{
+            opacity: 0.8;
+        }
+
+        /* Task count */
+        .task__meta {
+            font-size: 0.82rem;
+            color: #9a9080;
+            margin-bottom: 1rem;
+        }
+
+        /* List */
+        #todo__list{
+            list-style: none;
+        }
+
+        #todo__list li{
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background-color: #faf7f2;
+            border: 1px solid rgba(26,24,20,0.08);
+            padding: 0.75rem 1rem;
+            border-radius: 5px;
+            margin-bottom: 8px;
+            transition: background-color 0.2s;
+        }
+
+        #todo__list li:hover {
+            background-color: #f2ede4;
+        }
+
+        /* Checkbox */
+        #todo__list input[type="checkbox"]{
+            width: 17px;
+            height: 17px;
+            flex-shrink: 0;
+            accent-color: #c45c2e;
+            cursor: pointer;
+        }
+
+        /* task text */
+        #todo__list span{
+            flex: 1;
+            font-size: 0.95rem;
+            color: #1a1814;
+            transition: color 0.2s;
+        }
+
+        #todo__list span.completed {
+            text-decoration: line-through;
+            color: #b0a898;
+        }
+
+        /* Delete button */
+        .deleteBtn {
+            flex-shrink: 0;
+            background: none;
+            border: none;
+            color: #c0b8ae;
+            font-size: 1rem;
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 3px;
+            transition: color 0.2s, background 0.2s;
+            line-height: 1;
+        }
+
+        .deleteBtn:hover { color: #c45c2e; background: rgba(196,92,46,0.08); }
+
+        /* empty state */
+        .empty__state{
+            text-align: center;
+            padding: 2.5rem 1rem;
+            color: #b0a898;
+            font-size: 0.9rem;
+        }
+
+        /* list footer */
+        .list__footer{
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(26,24,20,0.08);
+        }
+
+        .clearBtn{
+            background-color: transparent;
+            border: none;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.82rem;
+            color: #9a9080;
+            cursor: pointer;
+            text-decoration: underline;
+            transition: color 0.2s;
+        }
+
+        .clearBtn:hover {color: #c45c2e;}
+    </style>
+</head>
+<body>
+    <div class="container">
+       <h1>To-Do List</h1>
+
+        <div class="task">
+            <input type="text" id="task__input" placeholder="Enter your task...">
+            <button class="addBtn" id="add__btn">Add task</button>
+        </div>
+    
+        <p class="task__meta" id="task__meta"></p>
+        <ul id="todo__list"></ul> 
+
+        <div class="list__footer" id="list__footer" style="display: none;">
+            <button class="clearBtn" id="clear__btn">
+                Clear completed
+            </button>
+        </div>
+
+    </div>
+    
+    <script>
+        const taskInput = document.getElementById('task__input');
+        const addBtn = document.getElementById('add__btn');
+        const taskMeta = document.getElementById('task__meta');
+        const todoList = document.getElementById('todo__list');
+        const listFooter = document.getElementById('list__footer');
+        const clearBtn = document.getElementById('clear__btn');
+
+        let todos = [];
+
+        function addTask() {
+            const text = taskInput.value.trim();
+
+            if(text === '') return;
+
+            todos.push({text: text, completed: false})
+
+            taskInput.value = '';
+            taskInput.focus();
+            render();
+        }
+        
+        function render() {
+            todoList.innerHTML = '';
+
+            if(todos.length === 0){
+                todoList.innerHTML = '<div class="empty__state">No tasks yet — add one above.</div>';
+                taskMeta.textContent = '';
+                listFooter.style.display = 'none';
+                return;
+            }
+
+            todos.forEach(function(todo, index) {
+                const li = document.createElement('li');
+
+                // create the checkbox
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.checked = todo.completed;
+
+                // create the span
+                const span = document.createElement('span');
+                span.textContent = todo.text;
+
+                if(todo.completed){
+                    span.classList.add('completed'); 
+                }
+
+                // create the delete button
+                const deleteBtn = document.createElement('button');
+                deleteBtn.textContent = '✕';
+                deleteBtn.className = 'deleteBtn';
+                deleteBtn.title = 'Delete task';
+
+                // attach enventlistner
+                checkbox.addEventListener('change', function () {
+                    toggleComplete(index);
+                })
+
+                deleteBtn.addEventListener('click', function(){
+                    deleteTask(index);
+                })
+
+                li.appendChild(checkbox);
+                li.appendChild(span);
+                li.appendChild(deleteBtn);
+
+                todoList.appendChild(li);
+            })
+
+            // Checkbox function
+            function toggleComplete(index) {
+                todos[index].completed = !todos[index].completed;
+                render();
+            }
+
+            // Delete function Explain _
+            function deleteTask(index) {
+                todos = todos.filter(function (_, i) {
+                    return i !== index;
+                   
+                }) 
+                render();
+            }
+
+            const remaining = todos.filter(function (todo) {
+                return todo.completed === false;
+            }).length;
+
+            taskMeta.textContent = remaining + ' of ' + todos.length + ' tasks remaining';
+        
+            const hasCompleted = todos.some(function(todo) {
+                return todo.completed === true;
+            })
+
+            listFooter.style.display = hasCompleted ? 'flex' : 'none';
+        }
+
+
+        //  keep only todos where completed is false.
+        function clearCompleted(){
+            todos = todos.filter(function(todo) {
+                return todo.completed === false;
+            })
+            render();
+        }
+
+        addBtn.addEventListener('click', addTask)
+
+        // allow pressing enter to add task
+        taskInput.addEventListener('keydown', function(e){
+            if(e.key === 'Enter') addTask();
+        });
+
+        clearBtn.addEventListener('click', clearCompleted);
+
+        render();
+    </script>
+</body>
+</html>
