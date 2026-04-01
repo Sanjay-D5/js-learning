@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz App</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body{
+            font-family: 'DM Sans', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .quiz__container{
+            max-width: 500px;
+            width: 100%;
+            background-color: #1e293b;
+            margin: 0 auto;
+            padding: 2.5rem;
+            border: 1px solid #323b4a;
+            border-radius: 10px;
+            box-shadow: 0 8px 10px #1e2229;
+        }
+        .quiz__header{
+            display: flex;
+            justify-content: space-between;
+            color: #9499a1;
+            font-size: 1rem;
+            margin-bottom: 24px;
+        }
+
+        .question__text{
+            font-weight: 700;
+            line-height: 1.4;
+            margin-bottom: 32px;
+            font-size: 1.5rem;
+        }
+
+        .options__container{
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 40px;
+            
+        }
+
+        .option--btn{
+            background-color: transparent;
+            color: white;
+            padding: 1rem;
+            border: 2px solid #484c51;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: 500;
+            cursor: pointer;
+            text-align: left;
+            transition: transform 0.2s, border 0.2s;
+        }
+
+        .option--btn:hover{
+            transform: translateY(-2px);
+            border-color: rgb(112, 39, 236);
+        }
+
+        .next__btn{
+            background-color: #f8fafc;
+            color: #0f172a;
+            border: none;
+            padding: 0.8rem;
+            width: 100%;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .next__btn:disabled{
+            background-color: #334155;
+            color: #64748b;
+            cursor: not-allowed;
+        }
+
+        .next__btn:hover:not(:disabled){
+            background-color: #e2e8f0;
+            transform: translateY(-2px);
+        }
+
+        .final__result{
+            text-align: center;
+            font-size: 1rem;
+            font-weight: 500;
+            margin-bottom: 40px;
+        }
+
+        .restartBtn{
+            padding: 0.75rem 0.85rem;
+            background-color: #f8fafc;
+            color: #0f172a;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            width: 40%;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz__container">
+        <div class="quiz__header">
+            <span class="question__counter">Question 0 of 5</span>
+            <span class="score">Score: 0</span>
+        </div>
+
+        <h2 class="question__text">What is the capital of France?</h2>
+
+        <div class="options__container">
+            
+        </div>
+
+        <button class="next__btn" disabled>Next question</button>
+
+    </div>
+    
+    <script>
+        let questions = [
+            {
+                question: 'What is the capital of France?',
+                choices: ['London', 'Paris', 'Berlin', 'Rome'],
+                answer: 'Paris'
+            },
+            {
+                question: "Which planet is known as the Red Planet?",
+                choices: ["Earth", "Mars", "Jupiter", "Venus"],
+                answer: "Mars"
+            },
+            {
+                question: "Who wrote the play 'Romeo and Juliet'?",
+                choices: ["William Shakespeare", "Charles Dickens", "Leo Tolstoy", "Mark Twain"],
+                answer: "William Shakespeare"
+            },
+            {
+                question: "What is the largest ocean on Earth?",
+                choices: ["Atlantic Ocean", "Indian Ocean", "Pacific Ocean", "Arctic Ocean"],
+                answer: "Pacific Ocean"
+            },
+            {
+                question: "Which element has the chemical symbol 'O'?",
+                choices: ["Oxygen", "Gold", "Osmium", "Iron"],
+                answer: "Oxygen"
+            }
+        ]
+
+        const Qcounter = document.querySelector('.question__counter');
+        const Score = document.querySelector('.score');
+        const Question = document.querySelector('.question__text');
+        const OptionContainer = document.querySelector('.options__container');
+        const NextBtn = document.querySelector('.next__btn');
+        const Container = document.querySelector('.quiz__container');
+        const QuizHeader = document.querySelector('.quiz__header');
+        const RestartBtn = document.querySelector('.restartBtn');
+        const FinalResult = document.querySelector('.final__result');
+
+        let currentIndex = 0;  // which question are we on?
+        let score = 0; // how many correct so far?      
+
+        // Renders next question
+        function nextQuestion() {
+           if (currentIndex < questions.length) {
+                Question.textContent = questions[currentIndex].question 
+                option(currentIndex);
+                Qcounter.textContent = `Question ${currentIndex + 1} of 5`
+                
+           } else {
+                QuizHeader.style.display = 'none';
+                NextBtn.style.display = 'none';
+                Question.style.display = 'none';
+                OptionContainer.style.display = 'none';
+                result(score);
+           } 
+        }
+
+        // Render options for answer
+        function option(currentIndex) {
+            OptionContainer.innerHTML = ''; // clear previous choices
+            questions[currentIndex].choices.forEach(function(item) {
+                const button = document.createElement('button');
+                button.className = 'option--btn';
+                button.textContent = item;
+                OptionContainer.appendChild(button);
+            })
+        }
+
+        // Validate and check for current answer
+        function currAnswer(e) {
+            // Ignore clicks that aren't on a button
+            if(!e.target.classList.contains('option--btn')) return;
+
+            // Disable all button after one is selected
+            document.querySelectorAll('.option--btn').forEach((btn) => {
+                btn.disabled = true;
+            })
+
+            let currAnswer = questions[currentIndex].answer;
+            if(e.target.textContent === currAnswer){
+                e.target.style.borderColor = 'green'
+                score++
+                scorefn(score);
+            } else {
+                e.target.style.borderColor = 'red';
+
+                // correct answer 
+                document.querySelectorAll('.option--btn').forEach(btn => {
+                    if(btn.textContent === currAnswer) {
+                        btn.style.borderColor = 'green';
+                    }
+                });
+            }
+            
+            NextBtn.removeAttribute('disabled');
+            
+        }
+
+        // Increment and render next question
+        function advanceQuestion() {
+            currentIndex++;       // increment first
+            NextBtn.setAttribute('disabled', true);
+            nextQuestion();       // then render the next one
+        }
+
+        function result(score){
+
+            let finalResult = document.createElement('p');
+            finalResult.className = 'final__result';
+            finalResult.innerHTML = `You scored : ${score} out of 5`
+
+            let restart = document.createElement('button');
+            restart.className = 'restartBtn';
+            restart.textContent = 'Restart';
+            
+            restart.addEventListener('click', restartFn);
+
+            Container.appendChild(finalResult);
+            Container.appendChild(restart);
+
+        }
+
+        function scorefn(score) {
+            Score.textContent = `Score: ${score}`
+        }
+
+        function restartFn() {
+            currentIndex = 0;
+            score = 0;
+            scorefn(0);
+
+            // Remove dynamically created elements instead of hiding
+            document.querySelector('.final__result')?.remove();
+            document.querySelector('.restartBtn')?.remove();
+
+            QuizHeader.style.display = 'flex';
+            Question.style.display = 'block';
+            OptionContainer.style.display = "flex";
+            NextBtn.style.display = 'block';
+            
+            nextQuestion()
+
+        }
+        NextBtn.addEventListener('click', advanceQuestion)
+
+        OptionContainer.addEventListener('click', (e) => currAnswer(e))
+        
+        nextQuestion();
+    </script>
+</body>
+</html>
