@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tip Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+    <style>
+        *, *::after, *::before {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body{
+            background-color: #0f172a;
+            color: #f8fafc;
+            font-family: 'Times New Roman', Times, serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1rem;
+        }
+
+        /* Card */
+        .container{
+            max-width: 680px;
+            width: 100%;
+            background-color: #1e293b;
+            border: 1px solid #2d3f55;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        /* Header */
+        .card__header{
+            background-color: #1a6bbb;
+            padding: 1.5rem 2rem;
+            text-align: center;
+        }
+
+        .card__header h1{
+            font-size: 1.5rem;
+            font-weight: 500;
+            letter-spacing: -0.01em;
+
+        }
+
+        /* Body */
+        .card__body{
+            padding: 2rem;
+        }
+
+        .inputs{
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .field{
+            display: flex;
+            flex-direction: column;
+            gap:6px;
+        }
+        .field label{
+            font-size: 0.82rem;
+            font-weight: 500;
+            color: #94a3b8;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+        .field input{
+            outline: none;
+            padding: 0.7rem 0.85rem;
+            border-radius: 8px;
+            border: 1.5px solid #2d3f55;
+            background-color: #0f172a;
+            color: #f8fafc;
+            font-size: 1rem;
+            width: 100%;
+            transition: border-color 0.2s;
+        }
+        .field input:focus{
+            border-color: #3b82f6;
+        }
+
+        /* Remove number input arrows */
+        .field input::-webkit-outer-spin-button,
+        .field input::-webkit-inner-spin-button { -webkit-appearance: none; }
+    
+        /* Error message */
+        .error__msg{
+            display: none;
+            color: #f87171;
+            font-size: 0.82rem;
+            margin-top: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            background-color: rgba(248, 113, 113, 0.1);
+            border-radius: 6px;
+            border-left: 3px solid #f87171;
+        }
+
+        .divider{
+            border: none;
+            border-top: 1px dashed #2d3f55;
+            margin: 1.5rem 0;
+        }
+
+        /* button */
+        .btn__row{
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn{
+            flex: 1;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 8px;
+           font-size: 0.95rem;
+           font-weight: 500;
+           cursor: pointer;
+           transition: opacity 0.2s, transform 0.15s;
+        }
+        
+        .btn:hover {
+            opacity: 0.88;
+            transform: translateY(-1px);
+        }
+        .btn:active{
+            transform: translateY(0);
+        }
+
+        .btn--calculate {
+            background-color: #3b82f6;
+            color: #fff;
+        }
+        .btn--reset {
+            background-color: #334155;
+            color: #94a3b8;
+        }
+
+        /* Result */
+        .results{
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .result__card{
+            background-color: #0f172a;
+            border: 1px solid #2d3f55;
+            border-radius: 10px;
+            padding: 1.25rem;
+            text-align: center;
+        }
+
+        .result__label{
+            font-size: 0.78rem;
+            font-weight: 500;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: #64748b;
+            margin-bottom: 0.5rem;
+        }
+        
+        .result__value{
+            font-size: 1.8rem;
+            font-weight: 500;
+            color: #38bdf8;
+            letter-spacing: -0.02em;
+            transition: color 0.02s;
+        }
+
+        .result__value.populated { color: #4ade80; }
+
+        @media (max-width: 520px){
+            .inputs {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card__header">
+            <h1>💰 Tip Calculator</h1>
+        </div>
+        
+        <div class="card__body">
+
+            <div class="inputs">
+                <div class="field">
+                    <label for="bill">Bill Amount</label>
+                    <input type="number" id="bill" placeholder="0.00" min="0">
+                </div>
+                
+                <div class="field">
+                    <label for="tip">Tip %</label>
+                    <input type="number" id="tip" placeholder="18" min="0" max="100">
+                </div>
+                
+                <div class="field">
+                    <label for="people">No. of people</label>
+                    <input type="number" id="people" placeholder="1" min="1">
+                </div>
+            </div>
+
+            <!-- Error message -->
+            <p class="error__msg" id="error__msg"></p>
+
+            <hr class="divider">
+
+            <div class="btn__row">
+                <button class="btn btn--calculate" id="calculate__btn">Calculate Tip</button>
+                <button class="btn btn--reset" id="reset__btn">Reset</button>
+            </div>
+
+            <!-- Results -->
+            <div class="results">
+                <div class="result__card">
+                    <p class="result__label">Tip Amount</p>
+                    <p class="result__value" id="tip__result">--</p>
+                </div>
+
+               <div class="result__card">
+                    <p class="result__label">Per Person</p>
+                    <p class="result__value" id="perperson__result">--</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        const billInput = document.getElementById('bill');
+        const tipInput = document.getElementById('tip');
+        const peopleInput = document.getElementById('people');
+        const calculateBtn = document.getElementById('calculate__btn');
+        const resetBtn = document.getElementById('reset__btn');
+        const tipResult = document.getElementById('tip__result');
+        const perPersonResult = document.getElementById('perperson__result');
+        const errorMsg = document.getElementById('error__msg');
+
+
+        function showError(message) {
+            errorMsg.textContent = message;
+            errorMsg.style.display = message ? 'block' : 'none';
+        }
+
+        function validate(bill, tip, people) {
+            if(bill === '' || tip === '' || people === ''){
+                showError("Please fill in all three fields.")
+                return false;
+            }
+
+            if(isNaN(Number(bill)) || isNaN(Number(tip)) || isNaN(Number(people))){
+                showError("Please enter a valid number only")
+                return false;
+            }
+
+            if(Number(bill) <= 0){
+                showError("Bill amount should be grater than Zero")
+                return false;
+            }
+
+            if(Number(tip) < 0 || Number(tip) > 100){
+                showError("Tip amount should be between 0 to 100")
+                return false;
+            }
+
+            if(Number(people) < 1){
+                showError("Number of People must be atleast 1")
+                return false;
+            }
+
+            return true;
+        }
+
+
+        function calculate() {
+            const billValue = billInput.value;
+            const tipValue = tipInput.value;
+            const peopleValue = peopleInput.value;
+
+            // Exit if validation fails 
+            if(!validate(billValue, tipValue, peopleValue)) return;
+
+            // Clear previous messages
+            showError('');
+            
+            const bill = parseFloat(billValue)
+            const tip = parseFloat(tipValue)
+            const people = parseFloat(peopleValue)
+
+            const tipAmount = bill * (tip / 100);
+            const totalBill = bill + tipAmount;
+            const perPerson = totalBill / people;
+
+            // Display result
+            tipResult.textContent = '₹' + tipAmount.toFixed(2);
+            perPersonResult.textContent = '₹' + perPerson.toFixed(2);
+
+            // hightlight result
+            tipResult.classList.add('populated');
+            perPersonResult.classList.add('populated');
+
+        }
+
+        function reset() {
+            billInput.value   = '';
+            tipInput.value    = '';
+            peopleInput.value = '';
+
+            tipResult.textContent = '--';
+            perPersonResult.textContent = '--';
+
+            tipResult.classList.remove('populated');
+            perPersonResult.classList.remove('populated');
+
+            showError('');
+
+            billInput.focus();
+        }
+
+        calculateBtn.addEventListener('click', calculate);
+        resetBtn.addEventListener('click', reset);
+
+        [billInput, tipInput, peopleInput].forEach(function(input) {
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') 
+                    calculate();
+                
+            });
+        });
+
+    </script>
+</body>
+</html>
