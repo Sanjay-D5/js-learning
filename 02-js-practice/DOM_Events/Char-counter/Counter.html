@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Character Counter</title>
     <style>
-        .over-limit{
+        .over__limit{
             color: red;
         }
     </style>
@@ -13,16 +13,16 @@
 <body>
     <label for="character">Your comments:</label>
     <textarea id="character" rows="10" cols="50"></textarea>
-    <p><span class="char-count" id="char-count">0</span>/ 150</p>
+    <p><span class="char__count" id="char__count">0</span>/ 150</p>
 
     <script>
     let character = document.getElementById('character');
-    let count = document.getElementById('char-count');
+    let count = document.getElementById('char__count');
 
     character.addEventListener('input', function() {
         const length = character.value.length;
         count.textContent = length;
-        length > 150 ? count.classList.add('over-limit') : count.classList.remove('over-limit');
+        length > 150 ? count.classList.add('over__limit') : count.classList.remove('over__limit');
         
     });
     </script>

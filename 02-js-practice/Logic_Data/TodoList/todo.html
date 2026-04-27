@@ -21,7 +21,7 @@
         /* Container */
         .container{
             padding: 2rem;
-             border: 1px solid rgba(26,24,20,0.1);
+            border: 1px solid rgba(26,24,20,0.1);
             background: #fffdf9;
             border-radius: 8px;
             margin: 0 auto;
@@ -60,7 +60,7 @@
         .task input::placeholder{
             color: #a09888;
         }
-        .addBtn{
+        .task__btn{
             padding: 0.75rem 1.25rem;
             flex-shrink: 0; /* stays its natural size, never shrinks */
             font-size: 0.95rem;
@@ -72,7 +72,7 @@
             font-weight: 500;
             transition: opacity 0.2s;
         }
-        .addBtn:hover{
+        .task__btn:hover{
             opacity: 0.8;
         }
 
@@ -127,7 +127,7 @@
         }
 
         /* Delete button */
-        .deleteBtn {
+        .delete__btn {
             flex-shrink: 0;
             background: none;
             border: none;
@@ -140,7 +140,7 @@
             line-height: 1;
         }
 
-        .deleteBtn:hover { color: #c45c2e; background: rgba(196,92,46,0.08); }
+        .delete__btn:hover { color: #c45c2e; background: rgba(196,92,46,0.08); }
 
         /* empty state */
         .empty__state{
@@ -159,7 +159,7 @@
             border-top: 1px solid rgba(26,24,20,0.08);
         }
 
-        .clearBtn{
+        .clear__btn{
             background-color: transparent;
             border: none;
             font-family: 'DM Sans', sans-serif;
@@ -170,7 +170,7 @@
             transition: color 0.2s;
         }
 
-        .clearBtn:hover {color: #c45c2e;}
+        .clear__btn:hover {color: #c45c2e;}
     </style>
 </head>
 <body>
@@ -179,14 +179,14 @@
 
         <div class="task">
             <input type="text" id="task__input" placeholder="Enter your task...">
-            <button class="addBtn" id="add__btn">Add task</button>
+            <button class="task__btn" id="task__btn">Add task</button>
         </div>
     
         <p class="task__meta" id="task__meta"></p>
         <ul id="todo__list"></ul> 
 
         <div class="list__footer" id="list__footer" style="display: none;">
-            <button class="clearBtn" id="clear__btn">
+            <button class="clear__btn" id="clear__btn">
                 Clear completed
             </button>
         </div>
@@ -195,7 +195,7 @@
     
     <script>
         const taskInput = document.getElementById('task__input');
-        const addBtn = document.getElementById('add__btn');
+        const addBtn = document.getElementById('task__btn');
         const taskMeta = document.getElementById('task__meta');
         const todoList = document.getElementById('todo__list');
         const listFooter = document.getElementById('list__footer');
@@ -244,7 +244,7 @@
                 // create the delete button
                 const deleteBtn = document.createElement('button');
                 deleteBtn.textContent = '✕';
-                deleteBtn.className = 'deleteBtn';
+                deleteBtn.className = 'delete__btn';
                 deleteBtn.title = 'Delete task';
 
                 // attach enventlistner
