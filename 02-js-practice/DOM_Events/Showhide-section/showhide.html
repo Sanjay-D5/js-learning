@@ -6,11 +6,11 @@
     <title>Review</title>
     <style>
         body{
-            font-family: 'DM Sans', sans-serif;  /* or any font you prefer */
+            font-family: 'DM Sans', sans-serif; 
             text-align: center;
-            padding: 50px 1rem;
+            padding: 4rem 0;
         }   
-        .btn-toggle{
+        .btn__toggle{
             background-color: bisque;
             color: black;
             padding: 1rem 0.75rem;
@@ -18,8 +18,9 @@
             font-size: 0.85rem;
             cursor: pointer;
             border-radius: 4px;
+            transition: background-Color 0.2s;
         }
-        .btn-toggle:hover {
+        .btn__toggle:hover {
             background-color: rgb(241, 189, 125);
         }
         .comment {
@@ -36,11 +37,11 @@
     </style>
 </head>
 <body>
-    <button class="btn-toggle" id="btn-toggle">Show comment</button>
+    <button class="btn__toggle" id="btn__toggle">Show comment</button>
     <div class="comment" id="comment">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Excepturi, molestiae. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatem repellat at eaque esse ut, pariatur quasi possimus illum placeat soluta.</div>
 
     <script>
-        const toggle = document.getElementById('btn-toggle');
+        const toggle = document.getElementById('btn__toggle');
         const comment = document.getElementById('comment');
 
         function commentfn() {
