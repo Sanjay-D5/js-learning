@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image carousel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+    <style>
+        *, *::after, *::before{
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        body{
+            font-family: 'DM Sans', sans-serif;
+            background-color: #e6edf3;
+            color: #0d1117;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem 1.5rem;
+        }
+
+        /* CARD */
+        .carousel__card{
+            width: 100%;
+            max-width: 680px;
+            background-color: #fff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+        }
+
+        /*IMAGE AREA */
+        .carousel__track{
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background-color: #e2e8f0;
+            overflow: hidden;
+        }
+
+        .carousel__img{
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: opacity 0.3s ease;
+        }
+
+        .carousel__img.loading { opacity: 0;}
+
+        /* COUNTER BADGE */
+        .carousel__counter {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background-color: rgba(0,0,0,0.45);
+            color: #fff;
+            font-size: 0.75rem;
+            font-weight: 500;
+            padding: 0.3rem 0.7rem;
+            border-radius: 999px;
+            letter-spacing: 0.04em;
+        }
+        
+        /* Prev / Next */
+        .carousel__arrow{
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255,255,255,0.85);
+            color: #1e293b;
+            border: none;
+            border-radius: 50%;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: background-color 0.2s, opacity 0.2s transform 0.15s;
+        }
+
+        .carousel__arrow:hover{
+            background-color: #fff;
+            opacity: 1;
+        }
+
+        .carousel__arrow:active {transform: translateY(-50%) scale(0.94);}
+
+        .carousel__arrow--prev {left: 0.85rem;}
+        .carousel__arrow--next {right: 0.85rem;}
+
+        .carousel__arrow:disabled {
+            opacity: 0.25;
+            cursor: default;
+        }
+
+        /* CAPTION AREA */
+        .carousel__info{
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .carousel__caption{
+            font-size: 0.9rem;
+            font-weight: 300;
+            color: #475569;
+            line-height: 1.5;
+            flex: 1;
+        }
+
+        /* DOTS */
+        .carousel__dots{
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        /* font-size: 0 hides any text content visually. */
+        .dot{
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #cbd5e1;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            font-size: 0;
+            transition: background-color 0.2s, width 0.2s;
+        }
+
+        .dot.active{
+            background-color: #1e293b;
+            width: 20px;
+            border-radius: 999px;
+        }
+    </style>
+</head>
+<body>
+    <div class="carousel__card">
+
+        <div class="carousel__track">
+            <img class="carousel__img" id="carousel__img" src="" alt=""/> 
+        
+            <span class="carousel__counter" id="carousel__counter">1 / 5</span>
+
+            <button class="carousel__arrow carousel__arrow--prev" id="prev__btn" aria-label="Previous slide">‹</button>
+            <button class="carousel__arrow carousel__arrow--next" id="next__btn" aria-label="Next slide">›</button>
+        </div>    
+
+        <div class="carousel__info">
+            <p class="carousel__caption" id="carousel__caption"></p>
+
+            <div class="carousel__dots" id="carousel__dots"></div>
+        </div>
+    </div>
+
+    <script>
+        // ?w=800&auto=format gives a clean sized image.
+        const images = [
+            {
+                src:'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&auto=format',
+                caption: 'Mountain landscape at golden hour — Swiss Alps'
+            },
+            {
+                src:'https://images.unsplash.com/photo-1511884642898-4c92249e20b6?w=800&auto=format',
+                caption: 'Forest path in early morning mist — Pacific Northwest'
+            },
+            {
+                src:'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format',
+                caption: 'Turquoise shoreline at low tide — Maldives'
+            },
+            {
+                src:'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&auto=format',
+                caption: 'River valley at sunrise — Patagonia'
+            },
+            {
+                src:'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800&auto=format',
+                caption: 'Aerial view of rolling green hills — Tuscany'
+            }
+        ];
+
+        const carouselImg = document.getElementById('carousel__img');
+        const carouselCaption = document.getElementById('carousel__caption')
+        const carouselDots = document.getElementById('carousel__dots');
+        const carouselCounter = document.getElementById('carousel__counter');
+        const prevBtn = document.getElementById('prev__btn');
+        const nextBtn = document.getElementById('next__btn');
+
+        let currentIndex = 0;
+
+        function renderDots() {
+            images.forEach(function (_, i) {
+                const dot = document.createElement('button');
+                dot.className = 'dot';
+                dot.dataset.index = i;
+
+                carouselDots.appendChild(dot);
+            })
+        }
+
+        function setActiveDot(Index) {
+            carouselDots.querySelectorAll('.dot').forEach((dot) => {
+                dot.classList.remove('active');
+            });
+
+            carouselDots.querySelector(`[data-index="${Index}"]`).classList.add('active');
+
+        }
+
+        function showSlide(index) {
+           const slide = images[index];
+
+           carouselImg.classList.add('loading');
+
+           setTimeout(function() {
+            carouselImg.src = slide.src;
+            carouselImg.alt = slide.caption;
+
+            carouselImg.onload = function(){
+                carouselImg.classList.remove('loading');
+            };
+           }, 150);
+
+           carouselCaption.textContent = slide.caption;
+
+           carouselCounter.textContent = `${index + 1} / ${images.length}`;
+
+           setActiveDot(index);
+        };
+
+        // ============================================
+        // NAVIGATION FUNCTIONS
+        // Both use modulo to wrap around cleanly.
+        //
+        // Going forward:
+        //   (4 + 1) % 5 = 0   → wraps to first
+        //
+        // Going backward:
+        //   (0 - 1 + 5) % 5 = 4  → wraps to last
+        //   Adding images.length before % prevents
+        //   negative modulo results in JavaScript.
+        // ============================================
+       function nextSlide() {
+            currentIndex = (currentIndex + 1) % images.length;
+            showSlide(currentIndex);
+        }
+
+        function prevSlide() {
+            currentIndex = (currentIndex - 1 + images.length) % images.length;
+            showSlide(currentIndex);
+        }
+
+        prevBtn.addEventListener('click',  prevSlide);
+        nextBtn.addEventListener('click',  nextSlide);
+
+        carouselDots.addEventListener('click', function(e) {
+            const dot = e.target.closest('.dot');
+            if(!dot) return;
+            currentIndex = Number(dot.dataset.index);
+            showSlide(currentIndex);
+        });
+
+        document.addEventListener('keydown', function(e){
+            if(e.key === "ArrowLeft") prevSlide();
+            if(e.key === "ArrowRight") nextSlide();
+        })
+
+        // AUTO-ADVANCE
+        // Advances every 4 seconds automatically.
+        // Pauses on hover — resumes when mouse leaves.
+        //
+        // Same setInterval/clearInterval pattern
+        // from the Pomodoro timer.
+        // 
+        let autoInterval = setInterval(nextSlide, 4000);
+
+        const card = document.querySelector('.carousel__card');
+
+        card.addEventListener('mouseenter', function(){
+            clearInterval(autoInterval);
+        });
+        card.addEventListener('mouseleave', function(){
+            autoInterval = setInterval(nextSlide, 4000);
+        });
+        renderDots();
+        showSlide(0)
+        
+    </script>
+</body>
+</html>
